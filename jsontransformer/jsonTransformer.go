@@ -1,22 +1,24 @@
 package jsontransformer
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"strconv"
 	"strings"
 	"time"
 )
 
 // The function transforms the json input string based on the provided rules
-func Transform(input []byte) (string, error) {
+func Transform(input []byte) (io.Reader, error) {
 
 	var inputStruct map[string]interface{}
 	err := json.Unmarshal(input, &inputStruct)
 
 	if err != nil {
-		return "", err
+		return bytes.NewReader([]byte("")), err
 	}
 
 	result := make(map[string]interface{})
@@ -36,7 +38,8 @@ func Transform(input []byte) (string, error) {
 
 	stringifiedOutput, _ := json.Marshal(result)
 
-	return string(stringifiedOutput), nil
+	// return string(stringifiedOutput), nil
+	return bytes.NewReader(stringifiedOutput), nil
 }
 
 // transformDataTypes applies specific rules for individual types

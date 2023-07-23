@@ -1,6 +1,7 @@
 package jsontransformer
 
 import (
+	"bytes"
 	"reflect"
 	"testing"
 )
@@ -193,7 +194,13 @@ func TestJsonTransformer(t *testing.T) {
 	}
 	for _, tc := range tests {
 		got, _ := Transform(tc.input)
-		if !reflect.DeepEqual(tc.output, got) {
+
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(got)
+
+		// return a string
+		outputString := buf.String()
+		if !reflect.DeepEqual(tc.output, outputString) {
 			t.Errorf("expected: %v, got: %v", tc.output, got)
 		}
 	}
