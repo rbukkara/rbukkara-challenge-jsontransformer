@@ -12,10 +12,13 @@ import (
 )
 
 // The function transforms the json input string based on the provided rules
-func Transform(input []byte) (io.Reader, error) {
+func Transform(input io.Reader) (io.Reader, error) {
 
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(input)
 	var inputStruct map[string]interface{}
-	err := json.Unmarshal(input, &inputStruct)
+
+	err := json.Unmarshal(buf.Bytes(), &inputStruct)
 
 	if err != nil {
 		return bytes.NewReader([]byte("")), err

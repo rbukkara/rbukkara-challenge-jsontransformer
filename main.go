@@ -2,22 +2,18 @@ package main
 
 import (
 	"fmt"
+	"jsontransformer/m/v2/fileio"
 	"jsontransformer/m/v2/jsontransformer"
-	"os"
 )
 
 func main() {
-	jsonFile, err := os.Open("input.json")
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer jsonFile.Close()
-	fmt.Println("Successfully Opened input.json")
 
-	inputJson, _ := os.ReadFile(jsonFile.Name())
+	inputJson := fileio.ReadFile()
+
 	output, err := jsontransformer.Transform(inputJson)
 	if err != nil {
 		fmt.Println("Error returned during transformation", err)
 	}
-	fmt.Println("Final Output: ", output)
+
+	fileio.WriteFile(output)
 }

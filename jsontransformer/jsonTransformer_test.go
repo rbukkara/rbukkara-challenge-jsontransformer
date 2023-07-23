@@ -3,18 +3,19 @@ package jsontransformer
 import (
 	"bytes"
 	"reflect"
+	"strings"
 	"testing"
 )
 
 type TestIO struct {
-	input  []byte
+	input  string
 	output string
 }
 
 func TestJsonTransformer(t *testing.T) {
 	tests := []TestIO{
 		{
-			input: []byte(`{
+			input: `{
 				"map_1": {
 					"M": {
 						"bool_1": {
@@ -44,11 +45,11 @@ func TestJsonTransformer(t *testing.T) {
 							}
 						}
 					}
-				}`),
+				}`,
 			output: `{"map_1":{"list_1":[11,false],"null_1":null}}`,
 		},
 		{
-			input: []byte(`{
+			input: `{
 				"map_1": {
 					"M": {
 						"bool_1": {
@@ -84,11 +85,11 @@ func TestJsonTransformer(t *testing.T) {
 							]
 						}
 					}
-				}}`),
+				}}`,
 			output: `{"map_1":{"list_1":["test",11,false],"null_1":null}}`,
 		},
 		{
-			input: []byte(`{
+			input: `{
 				"number_1": {
 					"N": "1.50"
 				},
@@ -134,11 +135,11 @@ func TestJsonTransformer(t *testing.T) {
 				"": {
 					"S": "noop"
 				}
-				}`),
+				}`,
 			output: `{"bool_1":true,"list_1":[11,false],"number_1":1.5,"string_1":"784498","string_2":1405544146}`,
 		},
 		{
-			input: []byte(`{
+			input: `{
 				"number_1": {
 					" N": " 1.50"
 				},
@@ -188,18 +189,19 @@ func TestJsonTransformer(t *testing.T) {
 				"": {
 					"S": "noop"
 				}
-				}`),
+				}`,
 			output: `{"map_1":{"list_1":[11,false],"null_1":null},"number_1":1.5,"string_1":"784498","string_2":1405544146}`,
 		},
 	}
 	for _, tc := range tests {
-		got, _ := Transform(tc.input)
+		reader := strings.NewReader(tc.input)
+		got, _ := Transform(reader)
 
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(got)
+		outputString := buf.String()
 
 		// return a string
-		outputString := buf.String()
 		if !reflect.DeepEqual(tc.output, outputString) {
 			t.Errorf("expected: %v, got: %v", tc.output, got)
 		}

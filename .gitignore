@@ -143,3 +143,5 @@ Temporary Items
 
 # Ignore code-workspaces
 *.code-workspace
+
+.dockerignore
